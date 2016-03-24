@@ -33,3 +33,12 @@ CREATE TABLE place (
 	CONSTRAINT FOREIGN KEY (place_name_id) REFERENCES place_name (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE place_is_in (
+	place_id INT NOT NULL,
+	is_in_place_id INT NOT NULL,
+	
+	CONSTRAINT FOREIGN KEY (place_id) REFERENCES place (id),
+	CONSTRAINT FOREIGN KEY (is_in_place_id) REFERENCES place (id),
+	CONSTRAINT UK_place_is_in UNIQUE (place_id, is_in_place_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+	
