@@ -9,17 +9,17 @@ place_type_filename = 'place_type.csv'
 place_filename = 'place.csv'
 place_is_in_filename = 'place_is_in.csv'
 
-place_name = codecs.open(place_name_filename, 'w', "utf-8")
-place_type = codecs.open(place_type_filename, 'w', "utf-8")
-place = codecs.open(place_filename, 'w', "utf-8")
-place_is_in = codecs.open(place_is_in_filename, 'w', "utf-8")
+place_name_csv = codecs.open(place_name_filename, 'w', "utf-8")
+place_type_csv = codecs.open(place_type_filename, 'w', "utf-8")
+place_csv = codecs.open(place_filename, 'w', "utf-8")
+place_is_in_csv = codecs.open(place_is_in_filename, 'w', "utf-8")
 
-place_name.truncate()
-place_type.truncate()
-place.truncate()
-place_is_in.truncate()
+place_name_csv.truncate()
+place_type_csv.truncate()
+place_csv.truncate()
+place_is_in_csv.truncate()
 
-place_name.write("lang_en,lang_ga\n")
+place_name_csv.write("lang_en,lang_ga\n")
 
 parser = etree.XMLParser(encoding='utf-8')
 
@@ -36,20 +36,27 @@ for i in range(10):
 		print base_url + str(i) + ": INVALID"
 	else:
 		print "Processing: " + base_url + str(i)  
+
+		# place_name
 		place_names = xml.xpath("//name")
 		if len(place_names) != 2:
 			print "Too many names."
 			break
 		en_name = xml.xpath("//name[@lang='en']")[0].get('wording')
 		ga_name = xml.xpath("//name[@lang='ga']")[0].get('wording')
-		place_name.write(en_name + "," + ga_name + "\n")
+		place_name_csv.write(en_name + "," + ga_name + "\n")
 
-		place_type_id = xml.xpath("//type")[0].get('id')
-		place_types.add(place_type_id)
+		# place_type
+		place_type = xml.xpath("//type")[0]
+		place_type_id = place_type.get('id')
+		place_type_name_en = place_type.get('titleEN')
+		place_type_name_ga = place_type.get('titleGA')
+		place_types.add(place_type_id + "," + place_type_name_en + "," + place_type_name_ga + "\n")
 
-print place_types
+for type in place_types:
+	place_type_csv.write(type)
 
-place_name.close()
-place_type.close()
-place.close()
-place_is_in.close()	
+place_name_csv.close()
+place_type_csv.close()
+place_csv.close()
+place_is_in_csv.close()	
