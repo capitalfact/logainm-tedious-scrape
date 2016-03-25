@@ -23,6 +23,8 @@ place_name.write("lang_en,lang_ga\n")
 
 parser = etree.XMLParser(encoding='utf-8')
 
+place_types = set() 
+
 for i in range(10):
 	response = requests.get(base_url + str(i), headers = { 'Content-Type':'application/xml'})
 
@@ -41,6 +43,11 @@ for i in range(10):
 		en_name = xml.xpath("//name[@lang='en']")[0].get('wording')
 		ga_name = xml.xpath("//name[@lang='ga']")[0].get('wording')
 		place_name.write(en_name + "," + ga_name + "\n")
+
+		place_type_id = xml.xpath("//type")[0].get('id')
+		place_types.add(place_type_id)
+
+print place_types
 
 place_name.close()
 place_type.close()
