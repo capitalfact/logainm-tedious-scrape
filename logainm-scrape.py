@@ -25,12 +25,13 @@ parser = etree.XMLParser(encoding='utf-8')
 
 place_types = set() 
 
+place_id = 1
 place_name_id = 1
 place_type_id = 1
 place_name_to_id = {}
 place_type_to_id = {}
 
-for i in range(10):
+for i in range(1):
 	response = requests.get(base_url + str(i), headers = { 'Content-Type':'application/xml'})
 
 	xml = etree.XML(response.content, parser)
@@ -64,6 +65,25 @@ for i in range(10):
 			place_type_to_id[place_type_code] = place_type_id
 			place_types.add(str(place_type_id) + "," + place_type_code + "," + place_type_name_en + "," + place_type_name_ga + "\n")
 			place_type_id += 1
+
+		# place
+		logainm_id = i
+		name_id = place_name_to_id[en_name + "/" + ga_name]
+		type_id = place_type_to_id[place_type_code]
+		geo = xml.xpath("//geo")[0]
+		lon = geo.get('lon')
+		lat = geo.get('lat')
+		geo_accurate = 0
+		if (geo.get('isAccurate') == "yes"):
+			geo_accurate = 1
+		place_csv.write(str(place_id) + "," + str(logainm_id) + "," + str(name_id) + "," + str(type_id) + "," + lon + "," + lat + "," + str(geo_accurate) + "\n")
+		place_id += 1
+
+		# is in relationships
+		is_ins = xml.xpath("//isIn")
+		for is_in in is_ins:
+			belongs_to = is_in.get('placeID')
+			place_is_in_csv.write(str(i) + "," + belongs_to + "\n")
 
 for type in place_types:
 	place_type_csv.write(type)
