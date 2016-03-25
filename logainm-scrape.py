@@ -19,11 +19,16 @@ place_type_csv.truncate()
 place_csv.truncate()
 place_is_in_csv.truncate()
 
-place_name_csv.write("lang_en,lang_ga\n")
+#place_name_csv.write("lang_en,lang_ga\n")
 
 parser = etree.XMLParser(encoding='utf-8')
 
 place_types = set() 
+
+place_name_id = 1
+place_type_id = 1
+place_name_to_id = {}
+place_type_to_id = {}
 
 for i in range(10):
 	response = requests.get(base_url + str(i), headers = { 'Content-Type':'application/xml'})
@@ -44,14 +49,21 @@ for i in range(10):
 			break
 		en_name = xml.xpath("//name[@lang='en']")[0].get('wording')
 		ga_name = xml.xpath("//name[@lang='ga']")[0].get('wording')
-		place_name_csv.write(en_name + "," + ga_name + "\n")
+		key = en_name + "/" + ga_name
+		place_name_to_id[key] = place_name_id
+		place_name_csv.write(str(place_name_id) + "," + en_name + "," + ga_name + "\n")
+		place_name_id += 1
 
 		# place_type
 		place_type = xml.xpath("//type")[0]
-		place_type_id = place_type.get('id')
+		place_type_code = place_type.get('id')
 		place_type_name_en = place_type.get('titleEN')
 		place_type_name_ga = place_type.get('titleGA')
-		place_types.add(place_type_id + "," + place_type_name_en + "," + place_type_name_ga + "\n")
+
+		if place_type_code not in place_type_to_id:
+			place_type_to_id[place_type_code] = place_type_id
+			place_types.add(str(place_type_id) + "," + place_type_code + "," + place_type_name_en + "," + place_type_name_ga + "\n")
+			place_type_id += 1
 
 for type in place_types:
 	place_type_csv.write(type)
