@@ -31,7 +31,7 @@ place_type_id = 1
 place_name_to_id = {}
 place_type_to_id = {}
 
-for i in range(1):
+for i in range(65000):
 	response = requests.get(base_url + str(i), headers = { 'Content-Type':'application/xml'})
 
 	xml = etree.XML(response.content, parser)
@@ -44,12 +44,19 @@ for i in range(1):
 		print "Processing: " + base_url + str(i)  
 
 		# place_name
-		place_names = xml.xpath("//name")
-		if len(place_names) != 2:
-			print "Too many names."
-			break
-		en_name = xml.xpath("//name[@lang='en']")[0].get('wording')
-		ga_name = xml.xpath("//name[@lang='ga']")[0].get('wording')
+		en_name = ""
+		ga_name = ""
+		en_names = xml.xpath("//name[@lang='en']")
+		for en in en_names:
+			if (en.get('isMain') == "yes"):
+				en_name = en.get('wording')
+		ga_names = xml.xpath("//name[@lang='ga']")
+		for ga in ga_names:
+			if (ga.get('isMain') == "yes"):
+				ga_name = ga.get('wording')
+		if (en_name == "" or ga_name == ""):
+			print "Problem with names"		
+
 		key = en_name + "/" + ga_name
 		place_name_to_id[key] = place_name_id
 		place_name_csv.write(str(place_name_id) + "," + en_name + "," + ga_name + "\n")
@@ -70,12 +77,17 @@ for i in range(1):
 		logainm_id = i
 		name_id = place_name_to_id[en_name + "/" + ga_name]
 		type_id = place_type_to_id[place_type_code]
-		geo = xml.xpath("//geo")[0]
-		lon = geo.get('lon')
-		lat = geo.get('lat')
+		geos = xml.xpath("//geo")
+		lon = ""
+		lat = ""
 		geo_accurate = 0
-		if (geo.get('isAccurate') == "yes"):
-			geo_accurate = 1
+		if len(geos) > 0:
+			geo = xml.xpath("//geo")[0]
+			lon = geo.get('lon')
+			lat = geo.get('lat')
+			if (geo.get('isAccurate') == "yes"):
+				geo_accurate = 1
+
 		place_csv.write(str(place_id) + "," + str(logainm_id) + "," + str(name_id) + "," + str(type_id) + "," + lon + "," + lat + "," + str(geo_accurate) + "\n")
 		place_id += 1
 
