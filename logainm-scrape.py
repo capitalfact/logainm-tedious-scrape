@@ -22,8 +22,6 @@ PLACE_TYPE_CSV.truncate()
 PLACE_CSV.truncate()
 PLACE_IS_IN_CSV.truncate()
 
-# place_name_csv.write("lang_en,lang_ga\n")
-
 PARSER = etree.XMLParser(encoding='utf-8')
 
 PLACE_TYPES = set()
