@@ -28,4 +28,7 @@ class Logainm:
     def get_main_name(self, lang):
         for name in self.responsexml.xpath("//name[@lang='" + lang + "']"):
             if name.get('isMain') == 'yes':
-                return name.get('wording')
+                wording = name.get('wording')
+                if not wording:
+                    wording = ''
+                return wording

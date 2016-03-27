@@ -2,28 +2,24 @@
 
 import codecs
 import requests
+import unicodecsv as csv
 from logainm import Logainm
 
 EN = 'en'
 GA = 'ga'
 BASE_URL = 'http://www.logainm.ie/xml/'
 
-PLACE_NAME_FILENAME = 'output/place_name.csv'
-PLACE_TYPE_FILENAME = 'output/place_type.csv'
-PLACE_FILENAME = 'output/place.csv'
-PLACE_IS_IN_FILENAME = 'output/place_is_in.csv'
+PLACE_NAMES_FH = open('output/place_name.csv', 'w+')
+PLACE_TYPES_FH = open('output/place_type.csv', 'w+')
+PLACES_FH = open('output/place.csv', 'w+')
+PLACE_IS_INS_FH = open('output/place_is_in.csv', 'w+')
 
-PLACE_NAME_CSV = codecs.open(PLACE_NAME_FILENAME, 'w', "utf-8")
-PLACE_TYPE_CSV = codecs.open(PLACE_TYPE_FILENAME, 'w', "utf-8")
-PLACE_CSV = codecs.open(PLACE_FILENAME, 'w', "utf-8")
-PLACE_IS_IN_CSV = codecs.open(PLACE_IS_IN_FILENAME, 'w', "utf-8")
+PLACE_NAMES_CSV = csv.writer(PLACE_NAMES_FH, encoding='utf-8')
+PLACE_TYPES_CSV = csv.writer(PLACE_TYPES_FH, encoding='utf-8')
+PLACES_CSV = csv.writer(PLACES_FH, encoding='utf-8')
+PLACE_IS_INS_CSV = csv.writer(PLACE_IS_INS_FH, encoding='utf-8')
 
-PLACE_NAME_CSV.truncate()
-PLACE_TYPE_CSV.truncate()
-PLACE_CSV.truncate()
-PLACE_IS_IN_CSV.truncate()
-
-PLACE_TYPES = set()
+PLACE_TYPES_SET = set()
 
 PLACE_ID = 1
 PLACE_NAME_ID = 1
@@ -45,16 +41,14 @@ for i in range(2):
         en_name = place.get_main_name(EN)
         ga_name = place.get_main_name(GA)
 
-        if not en_name:
+        if en_name == '':
             print "No name in English\n"
-        elif not ga_name:
+        elif ga_name == '':
             print "Gan ainm as Gaeilge\n"
 
         key = "%s/%s", en_name, ga_name
         PLACE_NAME_TO_ID[key] = PLACE_NAME_ID
-
-        # TODO move to csv module to fix this
-        # PLACE_NAME_CSV.write(("%s,%s,%s\n", str(PLACE_NAME_ID), en_name, ga_name))
+        PLACE_NAMES_CSV.writerow((str(PLACE_NAME_ID), en_name, ga_name))
         PLACE_NAME_ID += 1
 
         # place_type
@@ -66,12 +60,7 @@ for i in range(2):
 
         if place_type_code not in PLACE_TYPE_TO_ID:
             PLACE_TYPE_TO_ID[place_type_code] = PLACE_TYPE_ID
-            PLACE_TYPES.add(
-                str(PLACE_TYPE_ID) + ","
-                + place_type_code + ","
-                + place_type_name_en
-                + "," + place_type_name_ga
-                + "\n")
+            PLACE_TYPES_SET.add((str(PLACE_TYPE_ID), place_type_code, place_type_name_en, place_type_name_ga))
             PLACE_TYPE_ID += 1
 
         # place
@@ -85,8 +74,8 @@ for i in range(2):
         if geo.get('isAccurate') == 'yes':
             geo_accurate = 1
 
-        PLACE_CSV.write(str(PLACE_ID) + "," + str(logainm_id) + "," + str(name_id) + "," + str(
-            type_id) + "," + lon + "," + lat + "," + str(geo_accurate) + "\n")
+        PLACES_CSV.writerow((str(PLACE_ID), str(logainm_id), str(name_id), str(type_id), lon, lat, str(geo_accurate)))
+
         PLACE_ID += 1
 
         # is in relationships
@@ -94,12 +83,12 @@ for i in range(2):
         is_ins = place.getallelements("isIn")
         for is_in in is_ins:
             belongs_to = is_in.get('placeID')
-            PLACE_IS_IN_CSV.write(str(i) + "," + belongs_to + "\n")
+            PLACE_IS_INS_CSV.writerow((str(i), belongs_to))
 
-for place_type in PLACE_TYPES:
-    PLACE_TYPE_CSV.write(place_type)
+for place_type in PLACE_TYPES_SET:
+    PLACE_TYPES_CSV.writerow(place_type)
 
-PLACE_NAME_CSV.close()
-PLACE_TYPE_CSV.close()
-PLACE_CSV.close()
-PLACE_IS_IN_CSV.close()
+PLACE_NAMES_FH.close()
+PLACE_TYPES_FH.close()
+PLACES_FH.close()
+PLACE_IS_INS_FH.close()
