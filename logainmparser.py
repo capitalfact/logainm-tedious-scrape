@@ -4,7 +4,7 @@ from lxml import etree
 PARSER = etree.XMLParser(encoding='utf-8')
 
 
-class Logainm:
+class LogainmParser:
     def __init__(self, response):
         self.responsexml = etree.XML(response.content, PARSER)
 
@@ -13,7 +13,15 @@ class Logainm:
         return self.responsexml.xpath("//place")[0]
 
     def getelement(self, element):
-        return self.responsexml.xpath("//" + element)[0]
+        elements = self.responsexml.xpath("//" + element)
+        if elements and len(elements) > 0:
+            return self.responsexml.xpath("//" + element)[0]
+
+    def getelementattribute(self, element, attr):
+        if element:
+            return element.get(attr)
+        else:
+            return ''
 
     def getallelements(self, element):
         return self.responsexml.xpath("//" + element)

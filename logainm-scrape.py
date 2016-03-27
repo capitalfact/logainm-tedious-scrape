@@ -3,7 +3,7 @@
 import codecs
 import requests
 import unicodecsv as csv
-from logainm import Logainm
+from logainmparser import LogainmParser
 from socket import error as SocketError
 
 EN = 'en'
@@ -29,7 +29,7 @@ PLACE_TYPE_ID = 1
 PLACE_NAME_TO_ID = {}
 PLACE_TYPE_TO_ID = {}
 
-for i in range(390, 391):
+for i in range(248,249):
 
     try:
         response = requests.get(BASE_URL + str(i), headers={'Content-Type': 'application/xml'})
@@ -39,7 +39,7 @@ for i in range(390, 391):
     if not response:
         continue
 
-    place = Logainm(response)
+    place = LogainmParser(response)
 
     if not place.exists():
         print BASE_URL + str(i) + ": INVALID"
@@ -77,10 +77,10 @@ for i in range(390, 391):
         name_id = PLACE_NAME_TO_ID["%s/%s", en_name, ga_name]
         type_id = PLACE_TYPE_TO_ID[place_type_code]
         geo = place.getelement('geo')
-        lon = geo.get('lon')
-        lat = geo.get('lat')
+        lon = place.getelementattribute(geo, 'lon')
+        lat = place.getelementattribute(geo, 'lat')
         geo_accurate = 0
-        if geo.get('isAccurate') == 'yes':
+        if place.getelementattribute(geo, 'isAccurate') == 'yes':
             geo_accurate = 1
 
         PLACES_CSV.writerow((str(PLACE_ID), str(logainm_id), str(name_id), str(type_id), lon, lat, str(geo_accurate)))
