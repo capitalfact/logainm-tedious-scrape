@@ -3,7 +3,7 @@ CREATE DATABASE logainm;
 USE logainm;
 
 CREATE TABLE place_name (
-	id INT NOT NULL AUTO_INCREMENT,
+	id INT NOT NULL,
 	lang_en VARCHAR(256) NOT NULL,
 	lang_ga VARCHAR(256) NOT NULL,
 
@@ -11,7 +11,7 @@ CREATE TABLE place_name (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE place_type (
-        id INT NOT NULL AUTO_INCREMENT,
+        id INT NOT NULL,
         code VARCHAR(64) NOT NULL UNIQUE,
         description_en VARCHAR(256) NOT NULL,
         description_ga VARCHAR(256) NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE place_type (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE place (
-	id INT NOT NULL AUTO_INCREMENT,
+	id INT NOT NULL,
 	logainm_id INT NOT NULL,
 	place_name_id INT NOT NULL,
 	place_type_id INT NOT NULL,	
