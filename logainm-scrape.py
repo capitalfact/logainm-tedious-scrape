@@ -91,7 +91,7 @@ for i in range(2):
 
         # is in relationships
 
-        is_ins = place.getelement("isIn")
+        is_ins = place.getallelements("isIn")
         for is_in in is_ins:
             belongs_to = is_in.get('placeID')
             PLACE_IS_IN_CSV.write(str(i) + "," + belongs_to + "\n")

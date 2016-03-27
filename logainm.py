@@ -15,6 +15,9 @@ class Logainm:
     def getelement(self, element):
         return self.responsexml.xpath("//" + element)[0]
 
+    def getallelements(self, element):
+        return self.responsexml.xpath("//" + element)
+
     def exists(self):
         exists = self.getplace().get('nonexistent')
         if exists == 'yes':
