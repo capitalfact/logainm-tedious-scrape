@@ -18,7 +18,7 @@ class LogainmParser:
             return self.responsexml.xpath("//" + element)[0]
 
     def getelementattribute(self, element, attr):
-        if element:
+        if element is not None:
             return element.get(attr)
         else:
             return ''
