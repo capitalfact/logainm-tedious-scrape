@@ -4,6 +4,7 @@ import codecs
 import requests
 import unicodecsv as csv
 from logainm import Logainm
+from socket import error as SocketError
 
 EN = 'en'
 GA = 'ga'
@@ -13,6 +14,7 @@ PLACE_NAMES_FH = open('output/place_name.csv', 'w+')
 PLACE_TYPES_FH = open('output/place_type.csv', 'w+')
 PLACES_FH = open('output/place.csv', 'w+')
 PLACE_IS_INS_FH = open('output/place_is_in.csv', 'w+')
+FAILED_LOG = open('output/failed.log', 'w+')
 
 PLACE_NAMES_CSV = csv.writer(PLACE_NAMES_FH, encoding='utf-8')
 PLACE_TYPES_CSV = csv.writer(PLACE_TYPES_FH, encoding='utf-8')
@@ -27,8 +29,15 @@ PLACE_TYPE_ID = 1
 PLACE_NAME_TO_ID = {}
 PLACE_TYPE_TO_ID = {}
 
-for i in range(2):
-    response = requests.get(BASE_URL + str(i), headers={'Content-Type': 'application/xml'})
+for i in range(390, 391):
+
+    try:
+        response = requests.get(BASE_URL + str(i), headers={'Content-Type': 'application/xml'})
+    except SocketError as e:
+        FAILED_LOG.write(str(i))
+
+    if not response:
+        continue
 
     place = Logainm(response)
 

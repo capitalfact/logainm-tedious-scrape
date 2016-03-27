@@ -32,3 +32,4 @@ class Logainm:
                 if not wording:
                     wording = ''
                 return wording
+        return ''
