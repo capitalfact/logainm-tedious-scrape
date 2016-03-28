@@ -17,14 +17,14 @@ class LogainmParser:
         place_name = self.getplacename()
         place_type = self.getplacetype()
 
-        geo = placeobj.get('geo')
+        geos = self.getallelements('geo')
         lon = None
         lat = None
         geo_accurate = False
-        if geo is not None and len(geo) > 0:
-            lon = geo.get('lon')
-            lat = geo.get('lat')
-            if geo.get('isAccurate') == 'yes':
+        if geos is not None and len(geos) > 0:
+            lon = geos[0].get('lon')
+            lat = geos[0].get('lat')
+            if geos[0].get('isAccurate') == 'yes':
                 geo_accurate = True
         return Place(logainm_id, place_name, place_type, lon, lat, geo_accurate)
 
