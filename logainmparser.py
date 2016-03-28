@@ -6,7 +6,7 @@ PARSER = etree.XMLParser(encoding='utf-8')
 
 class LogainmParser:
     def __init__(self, response):
-        self.responsexml = etree.XML(response.content, PARSER)
+        self.responsexml = etree.XML(response, PARSER)
 
     def getplace(self):
         # return first place for now

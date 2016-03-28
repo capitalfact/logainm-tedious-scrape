@@ -29,17 +29,17 @@ PLACE_TYPE_ID = 1
 PLACE_NAME_TO_ID = {}
 PLACE_TYPE_TO_ID = {}
 
-for i in range(248,249):
+for i in range(2):
 
     try:
         response = requests.get(BASE_URL + str(i), headers={'Content-Type': 'application/xml'})
     except SocketError as e:
         FAILED_LOG.write(str(i))
 
-    if not response:
+    if not response or response.status_code != 200:
         continue
 
-    place = LogainmParser(response)
+    place = LogainmParser(response.content)
 
     if not place.exists():
         print BASE_URL + str(i) + ": INVALID"
