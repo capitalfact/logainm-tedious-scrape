@@ -20,8 +20,8 @@ PLACE_TYPES_CSV = csv.writer(PLACE_TYPES_FH, encoding='utf-8')
 PLACES_CSV = csv.writer(PLACES_FH, encoding='utf-8')
 PLACE_IS_INS_CSV = csv.writer(PLACE_IS_INS_FH, encoding='utf-8')
 
-class LogainmScraper:
 
+class LogainmScraper:
     def __init__(self, fromrange, torange):
         self.fromrange = fromrange
         self.torange = torange
@@ -49,58 +49,45 @@ class LogainmScraper:
             if response is None or response.status_code != 200:
                 continue
 
-            place = LogainmParser(response.content)
+            logainmparser = LogainmParser(response.content)
 
-            if not place.exists():
+            if not logainmparser.placeexists():
                 print BASE_URL + str(i) + ": INVALID"
             else:
                 print "Processing: " + BASE_URL + str(i)
 
+                place = logainmparser.getplace()
+
                 # place_name
-                en_name = place.get_main_name(EN)
-                ga_name = place.get_main_name(GA)
-
-                if en_name == '':
-                    print "No name in English\n"
-                elif ga_name == '':
-                    print "Gan ainm as Gaeilge\n"
-
-                key = "%s/%s", en_name, ga_name
-                place_name_id_map[key] = place_name_id
-                PLACE_NAMES_CSV.writerow((str(place_name_id), en_name, ga_name))
+                place_name = place.place_name
+                PLACE_NAMES_CSV.writerow((str(place_name.id), place_name.getname('en'), place_name.getname('ga')))
                 place_name_id += 1
 
                 # place_type
-                type_element = place.getelement('type')
-
-                place_type_code = type_element.get('id')
-                place_type_name_en = type_element.get('titleEN')
-                place_type_name_ga = type_element.get('titleGA')
+                place_type = place.place_type
+                place_type_code = place_type.code
 
                 if place_type_code not in place_type_id_map:
                     place_type_id_map[place_type_code] = place_type_id
-                    place_types_set.add((str(place_type_id), place_type_code, place_type_name_en, place_type_name_ga))
+                    place_types_set.add((str(place_type.id), place_type.code, place_type.desc_en, place_type.desc_ga))
                     place_type_id += 1
 
                 # place
-                logainm_id = i
-                name_id = place_name_id_map["%s/%s", en_name, ga_name]
-                type_id = place_type_id_map[place_type_code]
-                geo = place.getelement('geo')
-                lon = place.getelementattribute(geo, 'lon')
-                lat = place.getelementattribute(geo, 'lat')
-                geo_accurate = 0
-                if place.getelementattribute(geo, 'isAccurate') == 'yes':
-                    geo_accurate = 1
-
-                PLACES_CSV.writerow((str(place_id), str(logainm_id), str(name_id), str(type_id), lon, lat, str(geo_accurate)))
+                PLACES_CSV.writerow(
+                    (str(place.id),
+                     str(place.logainm_id),
+                     str(place.place_name_id),
+                     str(place.place_type_id),
+                     str(place.longitude),
+                     str(place.latitude),
+                     str(place.geo_accurate)))
                 place_id += 1
 
                 # is in relationships
-                is_ins = place.getallelements("isIn")
-                for is_in in is_ins:
-                    belongs_to = is_in.get('placeID')
-                    PLACE_IS_INS_CSV.writerow((str(i), belongs_to))
+                #is_ins = logainmparser.getallelements("isIn")
+                #for is_in in is_ins:
+                #    belongs_to = is_in.get('placeID')
+                #    PLACE_IS_INS_CSV.writerow((str(i), belongs_to))
 
         for place_type in place_types_set:
             PLACE_TYPES_CSV.writerow(place_type)
