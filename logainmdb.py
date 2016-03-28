@@ -2,7 +2,6 @@ from sqlalchemy import Column, String, Integer, Float, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 
-
 Base = declarative_base()
 
 
@@ -58,6 +57,7 @@ class Place(Base):
         self.longitude = lon
         self.latitude = lat
         self.geo_accurate = geo_acc
+
 
 engine = create_engine('sqlite:///sql/logainm.db', echo=True)
 Base.metadata.create_all(engine)

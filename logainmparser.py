@@ -73,4 +73,3 @@ class LogainmParser:
             if nonexistent == 'yes':
                 return False
         return True
-
