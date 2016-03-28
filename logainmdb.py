@@ -32,7 +32,7 @@ class PlaceType(Base):
     __tablename__ = 'place_type'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    code = Column(String(10))
+    code = Column(String(10), unique=True)
     desc_en = Column(String(120))
     desc_ga = Column(String(120))
 
@@ -63,7 +63,7 @@ class Place(Base):
     def __init__(self, logainm_id, place_name, place_type, lon, lat, geo_acc):
         self.logainm_id = logainm_id
         self.place_name = place_name
-        self. place_type = place_type
+        self.place_type = place_type
         self.longitude = lon
         self.latitude = lat
         self.geo_accurate = geo_acc
