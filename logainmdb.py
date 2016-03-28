@@ -53,8 +53,8 @@ class Place(Base):
     logainm_id = Column(Integer)
     place_name_id = Column(Integer, ForeignKey('place_name.id'))
     place_type_id = Column(Integer, ForeignKey('place_type.id'))
-    longitude = Column(Float)
-    latitude = Column(Float)
+    longitude = Column(String(25))
+    latitude = Column(String(25))
     geo_accurate = Column(Boolean)
 
     place_name = relationship(PlaceName)
@@ -63,13 +63,13 @@ class Place(Base):
     def __init__(self, logainm_id, place_name, place_type, lon, lat, geo_acc):
         self.logainm_id = logainm_id
         self.place_name = place_name
-        self.place_type = place_type
+        self. place_type = place_type
         self.longitude = lon
         self.latitude = lat
         self.geo_accurate = geo_acc
 
     def __repr__(self):
-        return "Place: { id=%d, logainm_id=%d, place_name=%s, place_type=%s, lon=%f, lat=%f, geo_accurate=%r }" \
+        return "Place: { id=%d, logainm_id=%d, place_name=%s, place_type=%s, lon=%s, lat=%s, geo_accurate=%r }" \
                % (self.id, self.logainm_id, self.place_name, self.place_type, self.longitude, self.latitude, self.geo_accurate)
 
 engine = create_engine('sqlite:///sql/logainm.db')
