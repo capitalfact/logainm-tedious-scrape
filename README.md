@@ -1,5 +1,5 @@
-# logainm
+# logainm-tedious-scrape
 
-A Python learning process that hopefully grows into itself.
-
-Tá sé in am tae!
+Hits every logainm.ie page (one at a time). 
+Repository is for educational purposes only. No longer maintained.
+Time to turn it up a notch.
