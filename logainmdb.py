@@ -76,8 +76,14 @@ engine = create_engine('sqlite:///sql/logainm.db')
 Base.metadata.create_all(engine)
 
 
-def persist(placeobj):
+def persist(place):
     DBSession = sessionmaker(engine)
     session = DBSession()
-    session.add(placeobj)
+
+    existing_place_type = session.query(PlaceType).filter_by(code=place.place_type.code).first()
+
+    if existing_place_type:
+        place.place_type = existing_place_type
+
+    session.add(place)
     session.commit()
