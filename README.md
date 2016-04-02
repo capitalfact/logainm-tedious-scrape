@@ -2,3 +2,5 @@
 
 Hits every logainm.ie page (one at a time). 
 Repository is for educational purposes only. No longer maintained.
+
+Usage: Run main.py
