@@ -1,6 +1,5 @@
 # logainm-tedious-scrape
 
-Hits every logainm.ie page (one at a time). 
-Repository is for educational purposes only. No longer maintained.
+Hits every logainm.ie page (one at a time).
 
 Usage: Run main.py
