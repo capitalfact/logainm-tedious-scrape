@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 
 install:
 	mkdir -p sql
