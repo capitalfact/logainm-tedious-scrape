@@ -43,10 +43,3 @@ class LogainmScraper:
                 persist(place)
 
                 print str(i) + ": " + str(place)
-
-                # is in relationships
-                # is_ins = logainmparser.getallelements("isIn")
-                # for is_in in is_ins:
-                #    belongs_to = is_in.get('placeID')
-                #    PLACE_IS_INS_CSV.writerow((str(i), belongs_to))
-

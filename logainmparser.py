@@ -1,9 +1,11 @@
 """Logainm data base scraping and parsing"""
 from lxml import etree
 from logainmdb import Place, PlaceName, PlaceType
+import csv
 
 PARSER = etree.XMLParser(encoding='utf-8')
-
+REL_FH = open('output/relationships.csv', 'w+')
+REL_CSV = csv.writer(REL_FH)
 
 class LogainmParser:
     def __init__(self, response):
@@ -26,6 +28,9 @@ class LogainmParser:
             lat = geos[0].get('lat')
             if geos[0].get('isAccurate') == 'yes':
                 geo_accurate = True
+
+        self.writeparents(logainm_id)
+
         return Place(logainm_id, place_name, place_type, lon, lat, geo_accurate)
 
     def getplacename(self):
@@ -51,6 +56,16 @@ class LogainmParser:
             name_en = typeelems[0].get('titleEN')
             name_ga = typeelems[0].get('titleGA')
         return PlaceType(code, name_en, name_ga)
+
+    def writeparents(self, logainm_id):
+        for parent in self.getrelationships():
+            REL_CSV.writerow([parent, logainm_id])
+
+    def getrelationships(self):
+        relations = [] # logainm_id mapping
+        for relation in self.getallelements("isIn"):
+            relations.append(relation.get('placeID'))
+        return relations
 
     def getelement(self, element):
         elements = self.responsexml.xpath('//' + element)
