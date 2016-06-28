@@ -2,4 +2,6 @@
 
 Hits every logainm.ie page (one at a time).
 
-Usage: Run main.py
+Usage: 
+make install
+make run
